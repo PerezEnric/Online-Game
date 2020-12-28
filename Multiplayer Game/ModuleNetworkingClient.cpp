@@ -132,7 +132,7 @@ void ModuleNetworkingClient::onPacketReceived(const InputMemoryStream &packet, c
 	else if (state == ClientState::Connected)
 	{
 		// TODO(you): World state replication lab session
-
+		rmc.read(packet);
 		// TODO(you): Reliability on top of UDP lab session
 	}
 }

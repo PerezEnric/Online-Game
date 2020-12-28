@@ -54,6 +54,7 @@ private:
 		float secondsSinceLastPacket = 0.0f;
 		float secondsSinceLastPing = 0.0f;
 		// TODO(you): World state replication lab session
+		ReplicationManagerServer rms;
 		// TODO(you): Reliability on top of UDP lab session
 
 
