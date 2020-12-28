@@ -70,7 +70,7 @@ private:
 
     void destroyClientProxy(ClientProxy *clientProxy);
 
-
+	float counter = 0.0F;
 
 public:
 
