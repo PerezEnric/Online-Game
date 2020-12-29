@@ -244,17 +244,18 @@ void ModuleNetworkingServer::onUpdate()
 				}
 
 				// TODO(you): World state replication lab session
-				counter += 1;
+				//counter += 1;
 
-				if (counter == 10)
-				{
-					OutputMemoryStream packet;
-					packet << PROTOCOL_ID;
+				//if (counter == 10)
+				//{
+				//	OutputMemoryStream packet;
+				//	packet << PROTOCOL_ID;
 
-					clientProxy.rms.write(packet);
-					sendPacket(packet, clientProxy.address);
-				}
-
+				//	clientProxy.rms.write(packet);
+				//	sendPacket(packet, clientProxy.address);
+				//	counter = 0;
+				//}
+				
 				// TODO(you): Reliability on top of UDP lab session
 			}
 		}

@@ -346,15 +346,15 @@ bool ModulePlatform::preUpdate()
 					{
 						Win32ProcessKeyboardButton(&KeyboardInput.rightShoulder, IsDown);
 					}
-					else if (VKCode == VK_UP)
+					else if (VKCode == VK_DOWN)
 					{
 						Win32ProcessKeyboardButton(&KeyboardInput.actionUp, IsDown);
 					}
-					else if (VKCode == VK_LEFT)
+					else if (VKCode == VK_SPACE)
 					{
 						Win32ProcessKeyboardButton(&KeyboardInput.actionLeft, IsDown);
 					}
-					else if (VKCode == VK_DOWN)
+					else if (VKCode == VK_UP)
 					{
 						Win32ProcessKeyboardButton(&KeyboardInput.actionDown, IsDown);
 					}
@@ -406,7 +406,7 @@ bool ModulePlatform::preUpdate()
 	if (IsFocused)
 	{
 		// Keyboard
-		KeyboardInput.horizontalAxis = ((GetKeyState('D') & (1 << 15)) ? 1.0f : 0.0f) - ((GetKeyState('A') & (1 << 15)) ? 1.0f : 0.0f);
+		KeyboardInput.horizontalAxis = ((GetKeyState(VK_LEFT) & (1 << 15)) ? 1.0f : 0.0f) - ((GetKeyState(VK_RIGHT) & (1 << 15)) ? 1.0f : 0.0f);
 		KeyboardInput.verticalAxis = ((GetKeyState('W') & (1 << 15)) ? 1.0f : 0.0f) - ((GetKeyState('S') & (1 << 15)) ? 1.0f : 0.0f);
 
 		// Mouse
