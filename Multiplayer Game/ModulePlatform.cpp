@@ -270,9 +270,9 @@ bool ModulePlatform::init()
 	LOG("Press the <F1> key to toggle UI visibility.");
 	LOG("Keyboard/gamepad are mapped to the global Input object.");
 	LOG("Keyboard mappings are : ");
-	LOG(" - A, S, D, W: Directional pad.");
-	LOG(" - Q, E: Left and right shoulder buttons.");
-	LOG(" - ESC, SPACE: Back and start buttons.");
+	LOG(" - ARROW KEYS: Directional pad.");
+	LOG(" - SPACEBAR: Shoot.");
+	LOG(" - ESC, ENTER: Back and start buttons.");
 	LOG(" - Arrows: Action buttons.");
 
 	return true;

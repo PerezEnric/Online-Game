@@ -15,7 +15,7 @@ struct ReplicationCommand
 class ReplicationManagerServer
 {
 public:
-	std::map<uint32, ReplicationAction> Action;
+	std::map<uint32, ReplicationAction> action;
 	
 	void create(uint32 networkId);
 	void update(uint32 networkId);
