@@ -25,6 +25,9 @@ void ReplicationManagerClient::read(const InputMemoryStream& packet)
 				go = App->modGameObject->Instantiate();
 				App->modLinkingContext->registerNetworkGameObjectWithNetworkId(go, netId);
 
+				if (go == nullptr)
+					continue;
+
 				packet >> go->position.x;
 				packet >> go->position.y;
 				packet >> go->angle;
@@ -37,9 +40,10 @@ void ReplicationManagerClient::read(const InputMemoryStream& packet)
 
 				if (num == 1)
 				{
-					//packet >> go->sprite->texture->filename;
 					go->sprite = App->modRender->addSprite(go);
-					go->sprite->texture = App->modTextures->GetTextureByID(netId);
+					int texture_id;
+					packet >> texture_id;
+					go->sprite->texture = App->modTextures->GetTextureByID(texture_id);
 					packet >> go->sprite->color.r;
 					packet >> go->sprite->color.g;
 					packet >> go->sprite->color.b;
@@ -49,37 +53,48 @@ void ReplicationManagerClient::read(const InputMemoryStream& packet)
 					packet >> go->sprite->pivot.y;
 				}
 
-				BehaviourType behaviour = BehaviourType::None;
+				int behaviour;
 				packet >> behaviour;
 
-				if (behaviour != BehaviourType::None)
+
+				go->behaviour = App->modBehaviour->addBehaviour((BehaviourType)behaviour, go);
+				/*if (go->behaviour != nullptr)
 				{
-					go->behaviour = App->modBehaviour->addBehaviour(behaviour, go);
-					if (go->behaviour != nullptr)
-					{
-						go->behaviour->read(packet);
-					}
-				}
+					go->behaviour->read(packet);
+				}*/
+				
 
 			}
 
 			if (rep_action == ReplicationAction::Update)
 			{
 				go = App->modLinkingContext->getNetworkGameObject(netId);
+				if (go == nullptr)
+					continue;
+
 				packet >> go->position.x;
 				packet >> go->position.y;
 				packet >> go->angle;
 				packet >> go->size.x;
 				packet >> go->size.y;
 				packet >> go->tag;
-			}
 
+				BehaviourType behaviour = BehaviourType::None;
+				//packet >> behaviour;
+
+				if (go->behaviour != nullptr)
+				{
+					go->behaviour->read(packet);
+				}
+			
+			}
+			if (rep_action == ReplicationAction::Destroy)
+			{
+				GameObject* gameobj = App->modLinkingContext->getNetworkGameObject(netId);
+				App->modLinkingContext->unregisterNetworkGameObject(gameobj);
+				Destroy(gameobj);
+			}
 		}
-		if (rep_action == ReplicationAction::Destroy)
-		{
-			GameObject* gameobj = App->modLinkingContext->getNetworkGameObject(netId);
-			App->modLinkingContext->unregisterNetworkGameObject(gameobj);
-			App->modGameObject->Destroy(gameobj);
-		}
+		
 	}
 }

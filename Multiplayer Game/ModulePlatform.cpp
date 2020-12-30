@@ -406,7 +406,7 @@ bool ModulePlatform::preUpdate()
 	if (IsFocused)
 	{
 		// Keyboard
-		KeyboardInput.horizontalAxis = ((GetKeyState(VK_LEFT) & (1 << 15)) ? 1.0f : 0.0f) - ((GetKeyState(VK_RIGHT) & (1 << 15)) ? 1.0f : 0.0f);
+		KeyboardInput.horizontalAxis = ((GetKeyState(VK_RIGHT) & (1 << 15)) ? 1.0f : 0.0f) - ((GetKeyState(VK_LEFT) & (1 << 15)) ? 1.0f : 0.0f);
 		KeyboardInput.verticalAxis = ((GetKeyState('W') & (1 << 15)) ? 1.0f : 0.0f) - ((GetKeyState('S') & (1 << 15)) ? 1.0f : 0.0f);
 
 		// Mouse

@@ -21,12 +21,24 @@ void ReplicationManagerServer::write(OutputMemoryStream &packet)
 {
 	packet << action.size();
 
-	for (auto it = action.begin(); it != action.end(); ++it)
+	for (auto it = action.begin(); it != action.end();)
 	{
 		packet << (*it).first;
 		packet << (*it).second;
 
 		GameObject* go = App->modLinkingContext->getNetworkGameObject((*it).first);
+
+		if ((*it).second == ReplicationAction::None)
+		{
+			++it;
+			continue;
+		}
+
+		if ((*it).second == ReplicationAction::Destroy)
+		{
+			it = action.erase(it);
+			continue;
+		}
 
 		if ((*it).second == ReplicationAction::Create)
 		{
@@ -56,7 +68,7 @@ void ReplicationManagerServer::write(OutputMemoryStream &packet)
 			if (go->behaviour != nullptr)
 			{
 				packet << (int)go->behaviour->type();
-				go->behaviour->write(packet);
+				//go->behaviour->write(packet);
 			}
 
 			else
@@ -74,22 +86,18 @@ void ReplicationManagerServer::write(OutputMemoryStream &packet)
 
 			if (go->behaviour != nullptr)
 			{
-				packet << (int)go->behaviour->type();
+				//packet << (int)go->behaviour->type();
 				go->behaviour->write(packet);
 			}
 
 			else
 				packet << (int)BehaviourType::None;
 
-
-
-		}
-
-		if ((*it).second == ReplicationAction::Destroy)
-		{
-			it = action.erase(it);
 		}
 
 		(*it).second = ReplicationAction::None;
+
+		++it;
+
 	}
 }
