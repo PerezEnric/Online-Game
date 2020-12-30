@@ -1,4 +1,5 @@
 #include "Networks.h"
+#include "ModuleTextures.h"
 
 
 extern ID3D11Device *g_pd3dDevice;
@@ -59,6 +60,17 @@ Texture * ModuleTextures::loadTexture(void * pixels, int width, int height)
 	texture.size = vec2{ (float)width, (float)height };
 	texture.used = true;
 	return &texture;
+}
+
+Texture* ModuleTextures::GetTextureByID(int tex_id)
+{
+	for (int i = 0; i < MAX_TEXTURES; ++i)
+	{
+		if (_textures[i].id == tex_id)
+			return &_textures[i];
+	}
+
+	return nullptr;
 }
 
 void ModuleTextures::freeTexture(Texture* tex)

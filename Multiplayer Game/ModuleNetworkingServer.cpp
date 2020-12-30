@@ -246,10 +246,11 @@ void ModuleNetworkingServer::onUpdate()
 				// TODO(you): World state replication lab session
 				counter += 1;
 
-				if (counter == 10)
+				if (counter == 4)
 				{
 					OutputMemoryStream packet;
 					packet << PROTOCOL_ID;
+					packet << ServerMessage::Replication;
 
 					clientProxy.rms.write(packet);
 					sendPacket(packet, clientProxy.address);

@@ -23,21 +23,24 @@ void ReplicationManagerServer::write(OutputMemoryStream &packet)
 
 	for (auto it = action.begin(); it != action.end(); ++it)
 	{
-		GameObject* go = App->modLinkingContext->getNetworkGameObject((*it).first);
+		packet << (*it).first;
+		packet << (*it).second;
 
-		packet << go->position.x;
-		packet << go->position.y;
-		packet << go->angle;
-		packet << go->size.x;
-		packet << go->size.y;
-		packet << go->tag;
+		GameObject* go = App->modLinkingContext->getNetworkGameObject((*it).first);
 
 		if ((*it).second == ReplicationAction::Create)
 		{
 			if (go->sprite != nullptr && go->sprite->texture != nullptr)
 			{
+				packet << go->position.x;
+				packet << go->position.y;
+				packet << go->angle;
+				packet << go->size.x;
+				packet << go->size.y;
+				packet << go->tag;
+
 				packet << 1;
-				packet << go->sprite->texture->filename;
+				packet << go->sprite->texture->id;
 				packet << go->sprite->color.r;
 				packet << go->sprite->color.g;
 				packet << go->sprite->color.b;
@@ -62,6 +65,12 @@ void ReplicationManagerServer::write(OutputMemoryStream &packet)
 
 		if ((*it).second == ReplicationAction::Update)
 		{
+			packet << go->position.x;
+			packet << go->position.y;
+			packet << go->angle;
+			packet << go->size.x;
+			packet << go->size.y;
+			packet << go->tag;
 
 			if (go->behaviour != nullptr)
 			{
@@ -72,6 +81,8 @@ void ReplicationManagerServer::write(OutputMemoryStream &packet)
 			else
 				packet << (int)BehaviourType::None;
 
+
+
 		}
 
 		if ((*it).second == ReplicationAction::Destroy)
@@ -79,11 +90,6 @@ void ReplicationManagerServer::write(OutputMemoryStream &packet)
 			it = action.erase(it);
 		}
 
-		if ((*it).second == ReplicationAction::None)
-		{
-			
-		}
-
-
+		(*it).second = ReplicationAction::None;
 	}
 }

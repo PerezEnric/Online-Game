@@ -5,72 +5,81 @@
 
 void ReplicationManagerClient::read(const InputMemoryStream& packet)
 {
-	int actions_count;
+	size_t actions_count;
 	packet >> actions_count;
 
 	for (int i = 0; i < actions_count; ++i)
 	{
-		ReplicationAction rep_action;
-		packet >> rep_action;
-
 		uint32 netId;
 		packet >> netId;
 
+		ReplicationAction rep_action;
+		packet >> rep_action;
 
-
-		GameObject* go = App->modLinkingContext->getNetworkGameObject(netId);
-
-		packet >> go->position.x;
-		packet >> go->position.y;
-		packet >> go->angle;
-		packet >> go->size.x;
-		packet >> go->size.y;
-		packet >> go->tag;
-
-		if (rep_action == ReplicationAction::Create)
+		if (rep_action != ReplicationAction::None)
 		{
-			go = App->modGameObject->Instantiate();
-			App->modLinkingContext->registerNetworkGameObjectWithNetworkId(go, netId);
+			GameObject* go = nullptr;
 
-			int num;
-			packet >> num;
-
-			if (num == 1)
+			if (rep_action == ReplicationAction::Create)
 			{
-				packet >> go->sprite->texture->filename;
-				packet >> go->sprite->color.r;
-				packet >> go->sprite->color.g;
-				packet >> go->sprite->color.b;
-				packet >> go->sprite->color.a;
-				packet >> go->sprite->order;
-				packet >> go->sprite->pivot.x;
-				packet >> go->sprite->pivot.y;
+				go = App->modGameObject->Instantiate();
+				App->modLinkingContext->registerNetworkGameObjectWithNetworkId(go, netId);
+
+				packet >> go->position.x;
+				packet >> go->position.y;
+				packet >> go->angle;
+				packet >> go->size.x;
+				packet >> go->size.y;
+				packet >> go->tag;
+
+				int num;
+				packet >> num;
+
+				if (num == 1)
+				{
+					//packet >> go->sprite->texture->filename;
+					go->sprite = App->modRender->addSprite(go);
+					go->sprite->texture = App->modTextures->GetTextureByID(netId);
+					packet >> go->sprite->color.r;
+					packet >> go->sprite->color.g;
+					packet >> go->sprite->color.b;
+					packet >> go->sprite->color.a;
+					packet >> go->sprite->order;
+					packet >> go->sprite->pivot.x;
+					packet >> go->sprite->pivot.y;
+				}
+
+				BehaviourType behaviour = BehaviourType::None;
+				packet >> behaviour;
+
+				if (behaviour != BehaviourType::None)
+				{
+					go->behaviour = App->modBehaviour->addBehaviour(behaviour, go);
+					if (go->behaviour != nullptr)
+					{
+						go->behaviour->read(packet);
+					}
+				}
+
 			}
 
-			BehaviourType behaviour = BehaviourType::None;
-			packet >> behaviour;
-
-			if (behaviour != BehaviourType::None)
+			if (rep_action == ReplicationAction::Update)
 			{
-				go->behaviour->read(packet);
+				go = App->modLinkingContext->getNetworkGameObject(netId);
+				packet >> go->position.x;
+				packet >> go->position.y;
+				packet >> go->angle;
+				packet >> go->size.x;
+				packet >> go->size.y;
+				packet >> go->tag;
 			}
 
 		}
-
-		if (rep_action == ReplicationAction::Update)
-		{
-
-		}
-
 		if (rep_action == ReplicationAction::Destroy)
 		{
-			App->modLinkingContext->unregisterNetworkGameObject(go);
-			App->modGameObject->Destroy(go);
-		}
-
-		if (rep_action == ReplicationAction::None)
-		{
-
+			GameObject* gameobj = App->modLinkingContext->getNetworkGameObject(netId);
+			App->modLinkingContext->unregisterNetworkGameObject(gameobj);
+			App->modGameObject->Destroy(gameobj);
 		}
 	}
 }
