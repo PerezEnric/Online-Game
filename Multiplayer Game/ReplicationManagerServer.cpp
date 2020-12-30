@@ -51,6 +51,14 @@ void ReplicationManagerServer::write(OutputMemoryStream &packet)
 				packet << go->size.y;
 				packet << go->tag;
 
+				if (go->animation != nullptr && go->animation->clip != nullptr)
+				{
+					packet << (int)go->animation->clip->id;
+				}
+
+				else
+					packet << -1;
+
 				packet << 1;
 				packet << go->sprite->texture->id;
 				packet << go->sprite->color.r;
@@ -60,6 +68,8 @@ void ReplicationManagerServer::write(OutputMemoryStream &packet)
 				packet << go->sprite->order;
 				packet << go->sprite->pivot.x;
 				packet << go->sprite->pivot.y;
+
+				
 			}
 
 			else

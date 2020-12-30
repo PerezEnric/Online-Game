@@ -35,6 +35,19 @@ void ReplicationManagerClient::read(const InputMemoryStream& packet)
 				packet >> go->size.y;
 				packet >> go->tag;
 
+				int clip_id;
+				packet >> clip_id;
+
+				if (clip_id == 0)
+				{
+					go->animation = App->modRender->addAnimation(go);
+
+					if (go->animation != nullptr)
+					{
+						go->animation->clip = App->modResources->explosionClip;
+					}
+				}
+
 				int num;
 				packet >> num;
 
